@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.css.mapper.SyxCityGameQuarterMapper">
+
+    <resultMap id="syxCityGameQuarteMap" type="com.css.domain.SyxCityGameQuarter">
+        <id property="id" column="id"></id>
+        <result property="date" column="date"></result>
+        <association property="syxGame" javaType="com.css.domain.SyxGame">
+            <id property="id" column="gameId" ></id>
+            <result property="name" column="gameName"></result>
+        </association>
+        <association property="city" javaType="com.css.domain.SyxCity">
+            <id property="id" column="cityId"></id>
+            <result property="name" column="city"></result>
+        </association>
+        <association property="syxQuarter" javaType="com.css.domain.SyxQuarter">
+            <id property="id" column="quarterId"></id>
+            <result property="quarter" column="quarter"></result>
+        </association>
+    </resultMap>
+
+    <select id="getSyxCityGameQuarterById" resultMap="syxCityGameQuarteMap">
+        select cgq.id      id,
+               cgq.date    `date`,
+               g.id        gameId,
+               g.name      gameName,
+               c.id        cityId,
+               c.name      city,
+               c.parent_id cityParentId,
+               q.id        quarterId,
+               q.quarter   quarter
+        from syx_city_game_quarter cgq
+                 inner join syx_game g on cgq.game_id = g.id
+                 inner join syx_city c on cgq.city_id = c.id
+                 inner join syx_quarter q on cgq.quarter_id = q.id
+        where cgq.id = #{cityGameQuarterId}
+    </select>
+
+    <select id="getSyxCityGameQuarterPage" resultMap="syxCityGameQuarteMap">
+        select cgq.id      id,
+               cgq.date    `date`,
+               g.id        gameId,
+               g.name      gameName,
+               c.id        cityId,
+               c.name      city,
+               c.parent_id cityParentId,
+               q.id        quarterId,
+               q.quarter   quarter
+        from syx_city_game_quarter cgq
+                 inner join syx_game g on cgq.game_id = g.id
+                 inner join syx_city c on cgq.city_id = c.id
+                 inner join syx_quarter q on cgq.quarter_id = q.id
+        <where>
+            <if test="id!=null and id>0">
+                and id = #{id}
+            </if>
+            <if test="date!=null and date!=''">
+                and date = #{date}
+            </if>
+            <if test="syxGameName!=null and syxGameName!=''">
+                and g.name = #{syxGameName}
+            </if>
+            <if test="cityName!=null and cityName!=''">
+                and c.name = #{cityName}
+            </if>
+            <if test="syxQuarterName!=null and syxQuarterName!=''">
+                and q.quarter = #{syxQuarterName}
+            </if>
+        </where>
+    </select>
+</mapper>
